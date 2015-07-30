@@ -1,3 +1,3 @@
 # weibo4j-oauth2
 
-GetHomeTimeline
+examples/weibo4j/examples/timeline/GetHomeTimeline.java

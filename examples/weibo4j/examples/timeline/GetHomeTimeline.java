@@ -1,16 +1,10 @@
 package weibo4j.examples.timeline;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.FileUtils;
 
 import weibo4j.Timeline;
 import weibo4j.examples.oauth2.Log;
@@ -19,9 +13,8 @@ import weibo4j.model.StatusWapper;
 import weibo4j.model.WeiboException;
 public class GetHomeTimeline {
 
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	static class MyTask implements Runnable{
-		static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-		static File output = new File("./weibo.er.txt");
 		@Override
 		public void run() {
 			//通过API测试工具获取
@@ -36,109 +29,18 @@ public class GetHomeTimeline {
 				for(Status s : status.getStatuses()){
 					
 					if(s.toString().contains("1767797335")){
-//						Log.logInfo(s.toString());
-						String text = s.getText();
-						if(text.contains("'")){
-							text = text.replaceAll("'", " ");
-							System.err.println("invalid json content from text in ER");
-						}
-						
-						String originalText = "";
-						if(null !=s.getRetweetedStatus()){
-							originalText = s.getRetweetedStatus().getText();
-							if(originalText.contains("'")){
-								originalText = originalText.replaceAll("'", " ");
-								System.err.println("invalid json content from original text in ER");
-							}
-						}
-						
-						
-						String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
-//						System.out.println(ss);
-						WeiboDao.instance.save(ss,"ER");
+						saveMessage(s,"ER");
 					}else if(s.toString().contains("1752340457")){
-						
-						String text = s.getText();
-						if(text.contains("'")){
-							text = text.replaceAll("'", " ");
-							System.err.println("invalid json content from text in Mechanic");
-						}
-						
-						String originalText = "";
-						if(null !=s.getRetweetedStatus()){
-							originalText = s.getRetweetedStatus().getText();
-							if(originalText.contains("'")){
-								originalText = originalText.replaceAll("'", " ");
-								System.err.println("invalid json content from original text in Mechanic");
-							}
-						}
-						String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
-//						System.out.println(ss);
-						WeiboDao.instance.save(ss,"Mechanic");
-						
+						saveMessage(s,"Mechanic");
 					}else if(s.toString().contains("2074611540")){
-						
-						String text = s.getText();
-						if(text.contains("'")){
-							text = text.replaceAll("'", " ");
-							System.err.println("invalid json content from text in Mechanic");
-						}
-						
-						String originalText = "";
-						if(null !=s.getRetweetedStatus()){
-							originalText = s.getRetweetedStatus().getText();
-							if(originalText.contains("'")){
-								originalText = originalText.replaceAll("'", " ");
-								System.err.println("invalid json content from original text in moda");
-							}
-						}
-						String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
-//						System.out.println(ss);
-						WeiboDao.instance.save(ss,"moda");
-						
+						saveMessage(s,"moda");
 					}else if(s.getUser().getId().equalsIgnoreCase("1645776681")){//LoneSchicksal
-						String text = s.getText();
-						if(text.contains("'")){
-							text = text.replaceAll("'", " ");
-							System.err.println("invalid json content from text in LoneSchicksal");
-						}
-						
-						String originalText = "";
-						if(null !=s.getRetweetedStatus()){
-							originalText = s.getRetweetedStatus().getText();
-							if(originalText.contains("'")){
-								originalText = originalText.replaceAll("'", " ");
-								System.err.println("invalid json content from original text in moda");
-							}
-						}
-						String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
-//						System.out.println(ss);
-						WeiboDao.instance.save(ss,"Lone");
-						
-					
+						saveMessage(s,"Lone");
 					}else if(s.getUser().getId().equalsIgnoreCase("1769173661")){//peng
-						String text = s.getText();
-						if(text.contains("'")){
-							text = text.replaceAll("'", " ");
-							System.err.println("invalid json content from text in LoneSchicksal");
-						}
-						
-						String originalText = "";
-						if(null !=s.getRetweetedStatus()){
-							originalText = s.getRetweetedStatus().getText();
-							if(originalText.contains("'")){
-								originalText = originalText.replaceAll("'", " ");
-								System.err.println("invalid json content from original text in moda");
-							}
-						}
-						String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
-//						System.out.println(ss);
-						WeiboDao.instance.save(ss,"Peng");
-						
-					
+						saveMessage(s,"Peng");
 					}
 					else{
-						System.out.println("someone else's weibo");
+						saveMessage(s);
 					}
 				}
 			} catch (WeiboException e) {
@@ -149,6 +51,31 @@ public class GetHomeTimeline {
 		} 
 		
 	}
+	
+	private static void saveMessage(Status s){
+		saveMessage(s,"db"+s.getUser().getId());
+	
+	}
+	
+	private static void saveMessage(Status s, String colName){
+		String text = s.getText();
+		if(text.contains("'")){
+			text = text.replaceAll("'", " ");
+			System.err.println("invalid json content from text in LoneSchicksal");
+		}
+		
+		String originalText = "";
+		if(null !=s.getRetweetedStatus()){
+			originalText = s.getRetweetedStatus().getText();
+			if(originalText.contains("'")){
+				originalText = originalText.replaceAll("'", " ");
+				System.err.println("invalid json content from original text in moda");
+			}
+		}
+		String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
+		WeiboDao.instance.save(ss,colName);
+	}
+	
 	public static void main(String[] args) {
 	
 		ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();

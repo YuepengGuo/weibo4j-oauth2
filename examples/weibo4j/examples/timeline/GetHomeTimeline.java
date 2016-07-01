@@ -25,9 +25,10 @@ public class GetHomeTimeline {
 			System.out.println("running at : "+sdf.format(new Date()));
 			try {
 				StatusWapper status = tm.getHomeTimeline();
+
 				
 				for(Status s : status.getStatuses()){
-					
+					                          
 					if(s.toString().contains("1767797335")){
 						saveMessage(s,"ER");
 					}else if(s.toString().contains("1752340457")){
@@ -38,8 +39,11 @@ public class GetHomeTimeline {
 						saveMessage(s,"Lone");
 					}else if(s.getUser().getId().equalsIgnoreCase("1769173661")){//peng
 						saveMessage(s,"Peng");
-					}
-					else{
+					}else if(s.getUser().getId().equalsIgnoreCase("2703536433")){//gren
+						saveMessage(s,"gren");
+					}else if(s.getUser().getId().equalsIgnoreCase("2013960857")){//hejia
+						saveMessage(s,"hejia");
+					}else{
 						saveMessage(s);
 					}
 				}
@@ -73,6 +77,7 @@ public class GetHomeTimeline {
 			}
 		}
 		String ss = "{strid"+":"+s.getIdstr()+",date"+":'"+sdf.format(s.getCreatedAt())+"', text: '"+text+"', originText: '"+(null ==s.getRetweetedStatus()? "":originalText)+"'}";
+//		System.out.println(ss);
 		WeiboDao.instance.save(ss,colName);
 	}
 	

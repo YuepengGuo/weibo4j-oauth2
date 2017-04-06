@@ -19,7 +19,8 @@ public class GetHomeTimeline {
 		public void run() {
 			//通过API测试工具获取
 			String access_token = "2.00ZTQAvCOrgHnD16b836f56bX5c2ME";
-			access_token = "2.00ZTQAvCFkfoyC9a8070103dvoYVBE";
+//			access_token = "2.00ZTQAvCFkfoyC9a8070103dvoYVBE";
+			access_token = "2.00ZTQAvCwIsxfC1ad6266543CzTmGB";
 			Timeline tm = new Timeline();
 			tm.client.setToken(access_token);
 			System.out.println("running at : "+sdf.format(new Date()));
@@ -31,19 +32,24 @@ public class GetHomeTimeline {
 					                          
 					if(s.toString().contains("1767797335")){
 						saveMessage(s,"ER");
-					}else if(s.toString().contains("1752340457")){
-						saveMessage(s,"Mechanic");
+					}else if(s.toString().contains("1704422861")){
+						saveMessage(s,"zheng");
 					}else if(s.toString().contains("2074611540")){
 						saveMessage(s,"moda");
-					}else if(s.getUser().getId().equalsIgnoreCase("1645776681")){//LoneSchicksal
+					}/*else if(s.getUser().getId().equalsIgnoreCase("1645776681")){//LoneSchicksal
 						saveMessage(s,"Lone");
-					}else if(s.getUser().getId().equalsIgnoreCase("1769173661")){//peng
+					}*/else if(s.getUser().getId().equalsIgnoreCase("1769173661")){//peng
 						saveMessage(s,"Peng");
 					}else if(s.getUser().getId().equalsIgnoreCase("2703536433")){//gren
 						saveMessage(s,"gren");
 					}else if(s.getUser().getId().equalsIgnoreCase("2013960857")){//hejia
 						saveMessage(s,"hejia");
-					}else{
+					}else if(s.getUser().getId().equalsIgnoreCase("2839685750")){//wzq
+						saveMessage(s,"wang");
+					}else if(s.getUser().getId().equalsIgnoreCase("1862695480")){
+						saveMessage(s,"wei");
+					}
+					else{
 						saveMessage(s);
 					}
 				}
@@ -84,7 +90,7 @@ public class GetHomeTimeline {
 	public static void main(String[] args) {
 	
 		ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
-		pool.scheduleWithFixedDelay(new MyTask(), 0, 4L, TimeUnit.MINUTES);
+		pool.scheduleWithFixedDelay(new MyTask(), 0, 3L, TimeUnit.MINUTES);
 		
 //		new MyTask().run();
 	}
